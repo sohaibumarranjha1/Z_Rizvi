@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zaino Neon 😏💖</title>
+
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  color:white;
+  overflow:hidden;
+}
+
+/* INTRO */
+#intro{
+  position:fixed;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:40px;
+  color:#00ffff;
+  text-shadow:0 0 20px cyan;
+  animation:intro 2.5s forwards;
+}
+
+@keyframes intro{
+  0%{opacity:0;}
+  50%{opacity:1;}
+  100%{opacity:0;}
+}
+
+/* CHAT */
+.chat{
+  width:100%;
+  max-width:420px;
+  height:100vh;
+  margin:auto;
+  display:none;
+  flex-direction:column;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(10px);
+}
+
+.header{
+  padding:15px;
+  text-align:center;
+  font-weight:bold;
+  background:linear-gradient(90deg,#00ffff,#ff00ff);
+}
+
+/* SCROLL FIX */
+.messages{
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+}
+
+/* SCROLLBAR */
+.messages::-webkit-scrollbar{
+  width:5px;
+}
+.messages::-webkit-scrollbar-thumb{
+  background:#00ffff;
+}
+
+/* MESSAGES */
+.msg{
+  padding:10px;
+  margin:6px;
+  border-radius:12px;
+  max-width:75%;
+  animation:fade 0.3s ease;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1;}
+}
+
+.bot{background:#111;}
+.user{
+  background:#00ffff;
+  color:black;
+  margin-left:auto;
+}
+
+/* BUTTONS */
+.controls{
+  padding:10px;
+  display:flex;
+  justify-content:space-around;
+}
+
+button{
+  padding:12px 16px;
+  border:none;
+  border-radius:10px;
+  font-size:14px;
+}
+
+#yes{background:#00ffcc;}
+#no{background:#ff0077;color:white;position:relative;}
+
+/* KISS */
+#kiss{
+  position:fixed;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  font-size:60px;
+  background:black;
+}
+
+.kissEmoji{
+  animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+  50%{transform:scale(1.5);}
+}
+
+/* EMOJI */
+.emoji{
+  position:absolute;
+  animation:fall 5s linear infinite;
+}
+@keyframes fall{
+  to{transform:translateY(100vh);}
+}
+</style>
+</head>
+
+<body>
+
+<div id="intro">Maira Mohra's Baddie ❤️</div>
+
+<div class="chat" id="chat">
+  <div class="header">Zaino 💖</div>
+  <div class="messages" id="messages"></div>
+
+  <div class="controls">
+    <button id="yes">Yes 😏</button>
+    <button id="no">No 🙄</button>
+  </div>
+</div>
+
+<div id="kiss">
+  <div class="kissEmoji">💋💋💋</div>
+</div>
+
+<!-- AUDIO -->
+<audio id="romantic" src="careless_whisper.mp3"></audio>
+
+<script>
+let stage=1;
+let noCount=0;
+let ctx;
+
+const msgBox=document.getElementById("messages");
+const romantic=document.getElementById("romantic");
+
+/* INTRO */
+setTimeout(()=>{
+  document.getElementById("intro").style.display="none";
+  document.getElementById("chat").style.display="flex";
+  bot("Kal tim pilayegi? 😏🍹");
+},2500);
+
+/* SOUND ENGINE */
+document.body.addEventListener("click",()=>{
+  if(!ctx) ctx=new AudioContext();
+},{once:true});
+
+function clickSound(){
+  if(!ctx) return;
+  let o=ctx.createOscillator();
+  let g=ctx.createGain();
+  o.frequency.value=600;
+  g.gain.value=0.1;
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime+0.07);
+}
+
+/* FUNNY SUCCESS SOUND */
+function successSound(){
+  if(!ctx) return;
+  let o=ctx.createOscillator();
+  let g=ctx.createGain();
+  o.frequency.value=1000;
+  g.gain.value=0.15;
+  o.connect(g); g.connect(ctx.destination);
+  o.start();
+  o.frequency.linearRampToValueAtTime(1400, ctx.currentTime+0.2);
+  o.stop(ctx.currentTime+0.3);
+}
+
+/* CHAT */
+function add(t,type){
+  clickSound();
+  let d=document.createElement("div");
+  d.className="msg "+type;
+  d.innerText=t;
+  msgBox.appendChild(d);
+  msgBox.scrollTop=msgBox.scrollHeight;
+}
+
+function bot(t){
+  setTimeout(()=>add(t,"bot"),500);
+}
+
+/* YES */
+document.getElementById("yes").onclick=()=>{
+  clickSound();
+  add("Yes 😏","user");
+
+  if(stage===1){
+    successSound(); // TIM SOUND
+    bot("Ohoo scene set 😂🍹");
+
+    setTimeout(()=>{
+      stage=2;
+      bot("Tim ke bad ghar chalogi?? 😏🏠");
+    },1000);
+  }
+
+  else{
+    /* GHAR YES */
+    romantic.play().catch(()=>{});
+
+    document.getElementById("chat").style.display="none";
+    document.getElementById("kiss").style.display="flex";
+
+    let text="Kya baat hai Zaino ji aap to aik dam mast bandi hain patakha";
+    let speech=new SpeechSynthesisUtterance(text);
+    speech.pitch=1.2;
+    speech.rate=0.9;
+    speechSynthesis.speak(speech);
+  }
+};
+
+/* NO */
+document.getElementById("no").onclick=()=>{
+  clickSound();
+  add("No 🙄","user");
+
+  let arr1=[
+    "Haye shoddiii 😭",
+    "Main piyuga 😎",
+    "Mujhe ni pata 😤",
+    "Idkkkk 😂",
+    "Pila de na 😏",
+    "I donut no 🍩🤣"
+  ];
+
+  let arr2=[
+    "Bacha masoom hai to maar dalogi kya? Hum ko ni dogi to achar daalogi kya? 😂",
+    "Ni main to chaluga 😤",
+    "Zabardasti le jauga 😎",
+    "Chal eh khoti 🤣",
+    "Dramaybaz 😏",
+    "Masoom banday ko na ni boltay 😭",
+    "No no no 😤"
+  ];
+
+  if(stage===1){
+    bot(arr1[noCount%arr1.length]);
+  }else{
+    bot(arr2[noCount%arr2.length]);
+  }
+
+  noCount++;
+
+  let btn=document.getElementById("no");
+  btn.style.transform=
+  `translate(${Math.random()*150-75}px,${Math.random()*40-20}px)`;
+
+  emojiRain();
+};
+
+/* EMOJI */
+function emojiRain(){
+  let e=document.createElement("div");
+  e.className="emoji";
+  e.innerText=["😂","🤣","😭"][Math.floor(Math.random()*3)];
+  e.style.left=Math.random()*window.innerWidth+"px";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),5000);
+}
+</script>
+
+</body>
+</html>
